@@ -1,2 +1,2 @@
 # NetNinja
-A network troubleshooting tools
+A network troubleshooting tool
