@@ -109,6 +109,9 @@ class Ninja:
             print(result)
             print(" \nwant to ping again? it may be a temporary error") 
             flag = input("[y/n]")
+            #solve the result thing
+            #parse and alanlyze output 
+            #use the loop only if the results are negatives
         
     def troubleshoot(self):
         # Starting the troubleshooting process
