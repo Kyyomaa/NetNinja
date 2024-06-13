@@ -1,7 +1,7 @@
 import subprocess
 import os
 from simple_term_menu import TerminalMenu
-
+import time
 class Ninja:
     def __init__(self):
         # Initialize color codes for terminal output
@@ -9,12 +9,11 @@ class Ninja:
         self.green = '\033[32m'
         self.reset = '\033[0m'
         self.yellow = '\033[33m'
-
-    def troubleshoot(self):
-        # Starting the troubleshooting process
-        print("You selected Troubleshoot.")
-        print("\n-----------------------------------")
-        print("Troubleshooting first layer ISO/OSI"
+        self.first_layer_status = None
+    
+    def first_layer(self):
+        print("\n#################################")
+        print("TROUBLESHOOTING FIRST LAYER ISO/OSI"
               "\n(Your Network interfaces)\n")
         try:
             # Run the command to get network interfaces information
@@ -65,23 +64,66 @@ class Ninja:
                 if interface['overall_status'] == 'UP':
                     print(f"This interface is {self.green}UP{self.reset}: {interface['name']}")
                     if interface['ip_status'] == 'NO IP':
+                        self.first_layer_status = "up but no ip" 
                         print(f"{self.red}NO IP ADDRESS{self.reset}\n Interface is up but it does not have an IP")
                     else:
+                        self.first_layer_status = "OK"
                         print(f"Interface has an IP assigned")
                         print("IP:")
                         for addr in interface['address']:
                             print(f"\t{addr}")                        
                 elif interface['overall_status'] == 'DOWN':
+                    self.first_layer_status = "DOWN"
                     print(f"Interface {interface['name']} is {self.red}DOWN{self.reset}")
                 else:
                     print(f"Interface {interface['name']} has {self.yellow}UNKNOWN{self.reset} STATUS, probably a loopback interface?")
         except Exception as e:
             print(f"ERR: {e} ")
         
-        print("------------------------------------")
+        print("\n#################################")
+        #input("Press Enter to continue...")
         
-        input("Press Enter to continue...")
+    def second_layer(self):
+        print("\n#################################")
+        print("TROUBLESHOOTING SECOND LAYER ISO/OSI"
+              " (MAC ADDRESS ETC)\n")
+        print("not really a priority RN, will work on it later")
 
+    def third_layer(self):
+        print("\n#################################")
+        print("TROUBLESHOOTING THIRD LAYER ISO/OSI"
+              " (IP/DNS/DHCP/NTP)\n")
+        print("List of third layer protocols supported:")
+        print(f"1. {self.green}IP{self.reset}")
+        print(f"2. {self.green}DNS{self.reset}")
+        print(f"3. {self.red}DHCP{self.reset}")
+        print("4. WILL ADD MORE IN THE FUTURE")
+        
+        if self.first_layer_status == 'OK':
+            print(f"\nInterfaces are up and you have an ip.")
+            print(f"Lets start pinging\n")
+            time.sleep(1)
+        flag = 'y' #default
+        while flag ==  'y':
+            result = subprocess.run(['ping', '8.8.8.8', '-c' , '3'] , text= True, capture_output=True)
+            print(result)
+            print(" \nwant to ping again? it may be a temporary error") 
+            flag = input("[y/n]")
+        
+    def troubleshoot(self):
+        # Starting the troubleshooting process
+        print("You selected Troubleshoot.")
+        self.first_layer()
+        input("Press Enter to continue...")
+        os.system('clear')
+        self.second_layer()
+        input("Press Enter to continue...")
+        os.system('clear')
+        self.third_layer()
+        input("Press Enter to continue...")
+        os.system('clear')
+
+        
     def network_health_status(self):
         # Placeholder for Network Health Status logic
         print("You selected Network Health Status.")
